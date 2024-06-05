@@ -7,12 +7,12 @@ const goldman = Goldman({
     subsets: ['latin']
 })
 
-export default function Home() {
+export default function Login() {
     return (
         <main
             className={`p-5 w-full h-full gap-2 bg-black flex flex-col justify-center items-center text-white ${goldman.className}`}>
             <div className="w-full h-[40%] flex flex-col justify-center items-center text-center">
-                <span className="md:text-6xl text-3xl">Revolutionize Your Traffic Management</span>
+                <span className="md:text-6xl text-3xl">LOGIN</span>
                 <br/>
                 <span className="md:text-4xl text-xl">Intelligent Solutions For Efficient Traffic Control</span>
             </div>
