@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/tabs"
 import {faGithub, faGoogle} from "@fortawesome/free-brands-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ImageUpload from "@/components/image-upload";
+import {TabsSelector} from "@/components/TabsSelector";
 
 
 const goldman = Goldman({
@@ -30,8 +32,9 @@ const goldman = Goldman({
 export default function Login() {
     return (
         <main
-            className={`p-5 w-full h-full gap-6 flex md:flex-row flex-col justify-center items-center text-white ${goldman.className}`}>
-
+            className={`p-5 w-full h-full gap-6 flex flex-col justify-center items-center text-white ${goldman.className}`}>
+            <ImageUpload/>
+            <Button className="ml-auto text-xl p-6 hover:bg-blue-500" >Start Analysis</Button>
         </main>
     );
 }
