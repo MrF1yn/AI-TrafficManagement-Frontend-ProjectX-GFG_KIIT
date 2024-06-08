@@ -29,7 +29,7 @@ const goldman = Goldman({
     subsets: ['latin']
 })
 
-export default function Login() {
+export default function UserPage() {
     return (
         <main
             className={`p-5 w-full h-full gap-6 flex flex-col justify-center items-center text-white ${goldman.className}`}>

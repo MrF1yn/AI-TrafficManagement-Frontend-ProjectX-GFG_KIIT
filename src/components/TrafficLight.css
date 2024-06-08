@@ -1,0 +1,135 @@
+/*Design Inspired by @ykadosh on Codepen*/
+
+
+
+.main {
+    display: flex;
+    /*width: 100%;*/
+    justify-content: center;
+    align-items: center;
+}
+
+.switch {
+    display: block;
+    position: relative;
+    background-color: black;
+    width: 70px;
+    height: 70px;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2), 0 0 1px 2px black, inset 0 2px 2px -2px white, inset 0 0 2px 5px #47434c, inset 0 0 2px 22px black;
+    border-radius: 50%;
+    padding: 20px;
+    margin: 5px;
+}
+
+.switch input {
+    display: none;
+}
+
+
+.switch .button {
+
+    transition: all 0.3s cubic-bezier(1, 0, 1, 1);
+    background-color: #9b0621;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    position: relative;
+    left: -0.75em;
+    top: -0.75em;
+    cursor: pointer;
+}
+
+#on{
+    animation: flicker 0.2s infinite 0.3s;
+}
+
+.switch .light {
+    animation: light-off 1s;
+
+    opacity: 0;
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(#f4d9b6, #ff0000 40%, transparent 70%);
+}
+
+.switch .dots {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(transparent 30%, rgba(101, 0, 0, 0.7) 70%);
+    background-size: 10px 10px;
+    border-radius: 50%;
+}
+
+@keyframes flicker {
+    0% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes light-off {
+    0% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 0;
+    }
+}
+
+.switch2 {
+    display: block;
+    position: relative;
+    background-color: black;
+    width: 70px;
+    height: 70px;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.2), 0 0 1px 2px black, inset 0 2px 2px -2px white, inset 0 0 2px 5px #47434c, inset 0 0 2px 22px black;
+    border-radius: 50%;
+    padding: 20px;
+    margin: 5px;
+}
+
+.switch2 input {
+    display: none;
+}
+
+
+.switch2 .button {
+    transition: all 0.3s cubic-bezier(1, 0, 1, 1);
+    background-color: #2f9407;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    position: relative;
+    left: -0.75em;
+    top: -0.79em;
+    cursor: pointer;
+}
+
+.switch2 .light {
+    opacity: 0;
+    animation: light-off 1s;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(#f6ff7e, #00ff00 40%, transparent 70%);
+}
+
+.switch2 .dots {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(transparent 30%, rgba(0, 101, 13, 0.7) 70%);
+    background-size: 10px 10px;
+    border-radius: 50%;
+}
