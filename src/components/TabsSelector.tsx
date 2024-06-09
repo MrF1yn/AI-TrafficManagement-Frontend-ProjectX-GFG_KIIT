@@ -10,12 +10,17 @@ const goldman = Goldman({
 })
 
 
-export function TabsSelector({children, className, route}: any) {
+export function TabsSelector({children, className, route, onClick}: any) {
     const router = useRouter();
 
 
     return (
         <Button variant="ghost" onClick={() => {
+            if(onClick){
+                onClick();
+                return;
+            }
+
             if (route)
              router.push(route)
         }}

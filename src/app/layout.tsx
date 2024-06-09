@@ -2,8 +2,10 @@ import type {Metadata} from "next";
 import {Inter} from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
-import { config } from '@fortawesome/fontawesome-svg-core'
+import {config} from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
+import AuthContext from "@/components/AuthContext";
+
 config.autoAddCss = false
 
 
@@ -20,7 +22,10 @@ export default function RootLayout({
     return (
         <html lang="en" className="h-[100vh] w-[100vw]">
         <body className="h-[100vh] w-[100vw] bg-black flex flex-col">
-        <NavBar></NavBar>
+        <AuthContext>
+            <NavBar></NavBar>
+
+        </AuthContext>
         {children}
         </body>
         </html>
