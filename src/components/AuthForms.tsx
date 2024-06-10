@@ -6,13 +6,13 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGithub, faGoogle} from "@fortawesome/free-brands-svg-icons";
-import {usePathname, useSearchParams} from "next/navigation";
-import {useRef} from "react";
+import {usePathname} from "next/navigation";
+import {useRef, useState} from "react";
 import {signIn} from "next-auth/react";
 import {useRouter} from "next/navigation";
 
 export default function AuthForms() {
-    const searchParams = useSearchParams();
+    const [unAuthorized, setUnAuthorized] = useState("invisible");
     const pathName = usePathname();
     const router = useRouter();
     const defaultRoute = pathName?.substring(1) ?? "login";
@@ -27,7 +27,11 @@ export default function AuthForms() {
             redirect: false,
         });
         if (signInPromise?.ok) {
+            setUnAuthorized("invisible");
             router.push("http://localhost:3000/user");
+        }
+        else{
+            setUnAuthorized("visible");
         }
 
     }
@@ -43,6 +47,8 @@ export default function AuthForms() {
 
         if (signInPromise?.ok) {
             router.push("http://localhost:3000/user");
+        }else{
+
         }
 
     }
@@ -76,7 +82,7 @@ export default function AuthForms() {
                                 password.current = e.target.value;
                             }} type="password" placeholder="enter your password here"/>
                             <span
-                                className={`text-sm text-red-600 ${searchParams?.has('error') ? "visible" : "invisible"}`}>Authentication Error</span>
+                                className={`text-sm text-red-600 ${unAuthorized}`}>Authentication Error</span>
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-2">
