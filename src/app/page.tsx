@@ -1,6 +1,7 @@
 import Image from "next/image";
 import {Goldman} from "next/font/google";
 import FeaturesCard from "@/components/FeaturesCard";
+import "./globals.css"
 const goldman = Goldman({
     weight: '400',
     subsets: ['latin']

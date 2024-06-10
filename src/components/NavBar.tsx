@@ -16,6 +16,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import {faBars} from "@fortawesome/free-solid-svg-icons";
+import {useEffect} from "react";
 
 const goldman = Goldman({
     weight: '700',
@@ -25,11 +26,11 @@ const goldman = Goldman({
 
 export default function NavBar() {
 
-    const {data: session, status} = useSession();
-
-    if (status == "loading") {
-        console.log("LOADING");
-    }
+    // const {data: session, status} = useSession();
+    //
+    // useEffect(()=>{
+    //     console.log(status)
+    // }, [status]);
 
     return (
 

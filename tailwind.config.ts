@@ -3,10 +3,7 @@ import type { Config } from "tailwindcss"
 const config = {
   darkMode: ["class"],
   content: [
-    './xxpages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./src/**/*.{js,ts,jsx,tsx,mdx}"
 	],
   prefix: "",
   theme: {
@@ -19,7 +16,6 @@ const config = {
     },
     extend: {
       colors: {
-        card_background: "rgb(39, 35, 35)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
