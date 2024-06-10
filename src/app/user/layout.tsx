@@ -18,6 +18,9 @@ export default function RootLayout({
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
+
+    
+
     return (
         <div className="w-full h-full flex md:flex-row flex-col-reverse gap-2" >
             <div className="flex justify-center items-center md:w-[10%] md:h-full w-full h-[60px] md:static z-10">

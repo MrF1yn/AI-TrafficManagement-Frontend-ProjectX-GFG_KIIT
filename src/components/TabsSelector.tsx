@@ -15,6 +15,7 @@ export function TabsSelector({children, className, route, onClick}: any) {
 
 
     return (
+
         <Button variant="ghost" onClick={() => {
             if(onClick){
                 onClick();

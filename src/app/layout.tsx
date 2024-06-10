@@ -22,10 +22,10 @@ export default function RootLayout({
     return (
         <html lang="en" className="h-[100vh] w-[100vw]">
         <body className="h-[100vh] w-[100vw] bg-black flex flex-col">
-        {/*<AuthContext>*/}
+        <AuthContext>
             <NavBar></NavBar>
             {children}
-        {/*</AuthContext>*/}
+        </AuthContext>
         </body>
         </html>
     );
