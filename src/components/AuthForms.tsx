@@ -28,9 +28,8 @@ export default function AuthForms() {
         });
         if (signInPromise?.ok) {
             setUnAuthorized("invisible");
-            router.push("http://localhost:3000/user");
-        }
-        else{
+            router.push(`${process.env.NEXT_PUBLIC_URL}user`);
+        } else {
             setUnAuthorized("visible");
         }
 
@@ -46,8 +45,8 @@ export default function AuthForms() {
         });
 
         if (signInPromise?.ok) {
-            router.push("http://localhost:3000/user");
-        }else{
+            router.push(`${process.env.NEXT_PUBLIC_URL}user`);
+        } else {
 
         }
 

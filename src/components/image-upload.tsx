@@ -160,9 +160,17 @@ export default function ImageUpload() {
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setFilesToUpload((prevUploadProgress) => {
+      acceptedFiles = acceptedFiles.slice(0, 4-prevUploadProgress.length).filter((file)=>{
+        for (let file1 of prevUploadProgress){
+          if(file1.File.name === file.name)return false;
+        }
+        return true;
+      });
+
       return [
         ...prevUploadProgress,
         ...acceptedFiles.map((file) => {
+
           return {
             progress: 0,
             File: file,
@@ -241,7 +249,7 @@ export default function ImageUpload() {
             return (
                 <div
                     key={fileUploadProgress.File.lastModified}
-                    className="h-full w-full flex justify-between gap-2 rounded-lg overflow-hidden border border-slate-100 group hover:pr-0 pr-2"
+                    className="h-[25%] w-full flex justify-between gap-2 rounded-lg overflow-hidden border border-slate-100 group hover:pr-0 pr-2"
                 >
                   <div className="flex flex-1 items-center  p-2">
                     <div className="text-white">
@@ -281,42 +289,42 @@ export default function ImageUpload() {
         </div>
 
 
-        {uploadedFiles.length > 0 && (
-            <div>
-              <p className="font-medium my-2 mt-6 text-muted-foreground text-sm">
-                Uploaded Files
-              </p>
-              <div className="space-y-2 pr-3">
-                {uploadedFiles.map((file) => {
-                  return (
-                      <div
-                          key={file.lastModified}
-                          className="flex justify-between gap-2 rounded-lg overflow-hidden border border-slate-100 group hover:pr-0 pr-2 hover:border-slate-300 transition-all"
-                      >
-                        <div className="flex items-center flex-1 p-2">
-                          <div className="text-white">
-                            {getFileIconAndColor(file).icon}
-                          </div>
-                          <div className="w-full ml-2 space-y-1">
-                            <div className="text-sm flex justify-between">
-                              <p className="text-muted-foreground ">
-                                {file.name.slice(0, 25)}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <button
-                            onClick={() => removeFile(file)}
-                            className="bg-red-500 text-white transition-all items-center justify-center px-2 hidden group-hover:flex"
-                        >
-                          <X size={20}/>
-                        </button>
-                      </div>
-                  );
-                })}
-              </div>
-            </div>
-        )}
+        {/*{uploadedFiles.length > 0 && (*/}
+        {/*    <div>*/}
+        {/*      <p className="font-medium my-2 mt-6 text-muted-foreground text-sm">*/}
+        {/*        Uploaded Files*/}
+        {/*      </p>*/}
+        {/*      <div className="space-y-2 pr-3">*/}
+        {/*        {uploadedFiles.map((file) => {*/}
+        {/*          return (*/}
+        {/*              <div*/}
+        {/*                  key={file.lastModified}*/}
+        {/*                  className="flex justify-between gap-2 rounded-lg overflow-hidden border border-slate-100 group hover:pr-0 pr-2 hover:border-slate-300 transition-all"*/}
+        {/*              >*/}
+        {/*                <div className="flex items-center flex-1 p-2">*/}
+        {/*                  <div className="text-white">*/}
+        {/*                    {getFileIconAndColor(file).icon}*/}
+        {/*                  </div>*/}
+        {/*                  <div className="w-full ml-2 space-y-1">*/}
+        {/*                    <div className="text-sm flex justify-between">*/}
+        {/*                      <p className="text-muted-foreground ">*/}
+        {/*                        {file.name.slice(0, 25)}*/}
+        {/*                      </p>*/}
+        {/*                    </div>*/}
+        {/*                  </div>*/}
+        {/*                </div>*/}
+        {/*                <button*/}
+        {/*                    onClick={() => removeFile(file)}*/}
+        {/*                    className="bg-red-500 text-white transition-all items-center justify-center px-2 hidden group-hover:flex"*/}
+        {/*                >*/}
+        {/*                  <X size={20}/>*/}
+        {/*                </button>*/}
+        {/*              </div>*/}
+        {/*          );*/}
+        {/*        })}*/}
+        {/*      </div>*/}
+        {/*    </div>*/}
+        {/*)}*/}
       </div>
   );
 }

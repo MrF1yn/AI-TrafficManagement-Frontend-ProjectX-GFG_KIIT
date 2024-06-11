@@ -76,7 +76,7 @@ export default function NavBar() {
                     <div className="flex gap-4">
                         <TabsSelector onClick={async () => {
                             let signOutPromise = await signOut({redirect: false});
-                                router.push("http://localhost:3000/");
+                                router.push(`${process.env.NEXT_PUBLIC_URL}`);
 
                         }} className="border-4 border-black">
                             <span>Logout</span>
