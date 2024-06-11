@@ -10,13 +10,14 @@ import {
   Video,
   X,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import { useDropzone } from "react-dropzone";
 import { Input } from "./ui/input";
 import ProgressBar from "./ui/progress";
 import { ScrollArea } from "./ui/scroll-area";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faVideo} from "@fortawesome/free-solid-svg-icons";
+import {useSession} from "next-auth/react";
 interface FileUploadProgress {
   progress: number;
   File: File;
@@ -56,9 +57,11 @@ const OtherColor = {
   fillColor: "fill-gray-400",
 };
 
-export default function ImageUpload() {
+export default function ImageUpload({token}: any) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+
+  
 
   const getFileIconAndColor = (file: File) => {
     if (file.type.includes(FileTypes.Image)) {
@@ -107,15 +110,15 @@ export default function ImageUpload() {
     );
 
     if (progress === 100) {
-      setUploadedFiles((prevUploadedFiles) => {
-        return [...prevUploadedFiles, file];
-      });
-
-      setFilesToUpload((prevUploadProgress) => {
-        return prevUploadProgress.filter((item) => item.File !== file);
-      });
-
-      return;
+      // setUploadedFiles((prevUploadedFiles) => {
+      //   return [...prevUploadedFiles, file];
+      // });
+      //
+      // setFilesToUpload((prevUploadProgress) => {
+      //   return prevUploadProgress.filter((item) => item.File !== file);
+      // });
+      //
+      // return;
     }
 
     setFilesToUpload((prevUploadProgress) => {
@@ -138,10 +141,14 @@ export default function ImageUpload() {
     onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
     cancelSource: CancelTokenSource
   ) => {
+
     return axios.post(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}upload/`,
       formData,
       {
+        headers:{
+          "Authorization":`Bearer ${token.access_token}`
+        },
         onUploadProgress,
         cancelToken: cancelSource.token,
       }
@@ -157,7 +164,6 @@ export default function ImageUpload() {
       return prevUploadedFiles.filter((item) => item !== file);
     });
   };
-
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setFilesToUpload((prevUploadProgress) => {
       acceptedFiles = acceptedFiles.slice(0, 4-prevUploadProgress.length).filter((file)=>{
@@ -166,7 +172,6 @@ export default function ImageUpload() {
         }
         return true;
       });
-
       return [
         ...prevUploadProgress,
         ...acceptedFiles.map((file) => {
@@ -181,29 +186,25 @@ export default function ImageUpload() {
     });
 
     // cloudinary upload
+    const fileUploadBatch = acceptedFiles.map((file) => {
+      console.log("FILE UPLOAD");
+      const formData = new FormData();
+      formData.append("video_file", file);
 
-    // const fileUploadBatch = acceptedFiles.map((file) => {
-    //   const formData = new FormData();
-    //   formData.append("file", file);
-    //   formData.append(
-    //     "upload_preset",
-    //     process.env.NEXT_PUBLIC_UPLOAD_PRESET as string
-    //   );
+      const cancelSource = axios.CancelToken.source();
+      return uploadImageToCloudinary(
+        formData,
+        (progressEvent) => onUploadProgress(progressEvent, file, cancelSource),
+        cancelSource
+      );
+    });
 
-    //   const cancelSource = axios.CancelToken.source();
-    //   return uploadImageToCloudinary(
-    //     formData,
-    //     (progressEvent) => onUploadProgress(progressEvent, file, cancelSource),
-    //     cancelSource
-    //   );
-    // });
+    try {
+      await Promise.all(fileUploadBatch);
 
-    // try {
-    //   await Promise.all(fileUploadBatch);
-    //   alert("All files uploaded successfully");
-    // } catch (error) {
-    //   console.error("Error uploading files: ", error);
-    // }
+    } catch (error) {
+      console.error("Error uploading files: ", error);
+    }
   }, []);
 
 
@@ -211,6 +212,7 @@ export default function ImageUpload() {
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
+      
       <div className="w-full h-full flex flex-col justify-center ">
         <div className="w-full h-[50%]">
           <label
@@ -230,14 +232,14 @@ export default function ImageUpload() {
               </p>
             </div>
           </label>
+              <Input
+                  {...getInputProps()}
+                  id="dropzone-file"
+                  accept="image/png, image/jpeg"
+                  type="file"
+                  className="hidden"
+              />
 
-          <Input
-              {...getInputProps()}
-              id="dropzone-file"
-              accept="image/png, image/jpeg"
-              type="file"
-              className="hidden"
-          />
         </div>
 
         <p className="  text-lg">
