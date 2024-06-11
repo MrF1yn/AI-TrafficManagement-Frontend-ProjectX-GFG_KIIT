@@ -8,7 +8,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGithub, faGoogle} from "@fortawesome/free-brands-svg-icons";
 import {usePathname} from "next/navigation";
 import {useRef, useState} from "react";
-import {signIn} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
 import {useRouter} from "next/navigation";
 
 export default function AuthForms() {
@@ -19,18 +19,32 @@ export default function AuthForms() {
     let email = useRef("");
     let password = useRef("");
     let username = useRef("");
+    let {data: session, status} = useSession();
+    if(status === "authenticated"){
+        router.push('/user');
+    }
 
-    async function submit() {
-        let signInPromise = await signIn("credentials", {
-            username: username.current,
-            password: password.current,
-            redirect: false,
-        });
-        if (signInPromise?.ok) {
-            setUnAuthorized("invisible");
-            router.push(`${process.env.NEXT_PUBLIC_URL}user`);
-        } else {
-            setUnAuthorized("visible");
+
+    async function submit(provider: string = "credentials") {
+        let signInPromise;
+        if(provider === "credentials") {
+            signInPromise = await signIn("credentials", {
+                username: username.current,
+                password: password.current,
+                redirect: false,
+            });
+            if (signInPromise?.ok) {
+                setUnAuthorized("invisible");
+                router.push(`${process.env.NEXT_PUBLIC_URL}user`);
+            } else {
+                setUnAuthorized("visible");
+            }
+            return;
+        }
+        if(provider === "google"){
+            signIn("google", {
+                callbackUrl: '/user'
+            });
         }
 
     }
@@ -85,10 +99,10 @@ export default function AuthForms() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex flex-col gap-2">
-                        <Button className="w-full" onClick={submit}>Login</Button>
+                        <Button className="w-full" onClick={()=>{submit()}}>Login</Button>
                         <span>OR</span>
                         <span className="flex gap-2 md:flex-row flex-col">
-                                    <Button className="flex gap-2 items-center hover:bg-red-500">
+                                    <Button onClick={()=>{submit("google")}} className="flex gap-2 items-center hover:bg-red-500">
                                         <FontAwesomeIcon icon={faGoogle}/>
                                         <span>Login with Google</span>
                                     </Button>
@@ -133,7 +147,7 @@ export default function AuthForms() {
                         <Button onClick={registerSubmit} className="w-full">Register</Button>
                         <span>OR</span>
                         <span className="flex gap-2 md:flex-row flex-col">
-                                    <Button className="flex gap-2 items-center hover:bg-red-500">
+                                    <Button onClick={()=>{submit("google")}} className="flex gap-2 items-center hover:bg-red-500">
                                         <FontAwesomeIcon icon={faGoogle}/>
                                         <span>Register with Google</span>
                                     </Button>

@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import {JWT} from "next-auth/jwt";
+import GoogleProvider from "next-auth/providers/google";
 
 // These two values should be a bit less than actual token lifetimes
 const BACKEND_ACCESS_TOKEN_LIFETIME = 45 * 60;            // 45 minutes
@@ -15,6 +16,23 @@ const SIGN_IN_HANDLERS: any = {
     "credentials": async (user: any, account: any, profile: any, email:any, credentials:any) => {
         return true;
     },
+    "google": async (user:any, account:any, profile:any, email:any, credentials:any) => {
+        try {
+            // console.log(account["access_token"]);
+            const response = await axios({
+                method: "post",
+                url: process.env.NEXTAUTH_BACKEND_URL + "auth/google/",
+                data: {
+                    access_token: account["access_token"]
+                },
+            });
+            account["meta"] = response.data;
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
 };
 const SIGN_IN_PROVIDERS = Object.keys(SIGN_IN_HANDLERS);
 
@@ -70,10 +88,22 @@ const handler = NextAuth({
                 return null;
             },
         }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID??"",
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET??"",
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code"
+                }
+            }
+        }),
     ],
 
     pages: {
         signIn: '/login',
+        error: '/login',
     },
 
     callbacks: {
