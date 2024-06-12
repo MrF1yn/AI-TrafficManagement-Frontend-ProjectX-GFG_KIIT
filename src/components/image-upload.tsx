@@ -20,7 +20,8 @@ import {faVideo} from "@fortawesome/free-solid-svg-icons";
 import {useSession} from "next-auth/react";
 interface FileUploadProgress {
   progress: number;
-  File: File;
+  File?: File;
+  fileName: string;
   source: CancelTokenSource | null;
 }
 
@@ -57,44 +58,35 @@ const OtherColor = {
   fillColor: "fill-gray-400",
 };
 
-export default function ImageUpload({token}: any) {
+export default function ImageUpload({token, files}: any) {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+  useEffect(() => {
+    axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}rest/get_uploads/`,
+        {
+          headers:{
+            "Authorization":`Bearer ${token.access_token}`
+          },
+        }
+    ).then((response)=>{
+      let progress: FileUploadProgress[] = response.data.map((value: string): FileUploadProgress=>{
+        return {
+          progress: 100,
+          fileName: value,
+          source: null,
+        }
+      });
+      console.log(progress);
+      setFilesToUpload(progress);
+    });
+  }, []);
 
-  
 
-  const getFileIconAndColor = (file: File) => {
-    if (file.type.includes(FileTypes.Image)) {
-      return {
-        icon: <FileImage size={40} className={ImageColor.fillColor} />,
-        color: ImageColor.bgColor,
-      };
-    }
-
-    if (file.type.includes(FileTypes.Pdf)) {
-      return {
-        icon: <File size={40} className={PdfColor.fillColor} />,
-        color: PdfColor.bgColor,
-      };
-    }
-
-    if (file.type.includes(FileTypes.Audio)) {
-      return {
-        icon: <AudioWaveform size={40} className={AudioColor.fillColor} />,
-        color: AudioColor.bgColor,
-      };
-    }
-
-    if (file.type.includes(FileTypes.Video)) {
-      return {
-        icon: <FontAwesomeIcon icon={faVideo}/>,
-        color: VideoColor.bgColor,
-      };
-    }
-
+  const getFileIconAndColor = (file: File | undefined) => {
     return {
-      icon: <FolderArchive size={40} className={OtherColor.fillColor} />,
-      color: OtherColor.bgColor,
+      icon: <FontAwesomeIcon icon={faVideo}/>,
+      color: VideoColor.bgColor,
     };
   };
 
@@ -123,7 +115,7 @@ export default function ImageUpload({token}: any) {
 
     setFilesToUpload((prevUploadProgress) => {
       return prevUploadProgress.map((item) => {
-        if (item.File.name === file.name) {
+        if (item.File?.name === file.name) {
           return {
             ...item,
             progress,
@@ -143,7 +135,7 @@ export default function ImageUpload({token}: any) {
   ) => {
 
     return axios.post(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}upload/`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}rest/upload/`,
       formData,
       {
         headers:{
@@ -155,20 +147,34 @@ export default function ImageUpload({token}: any) {
     );
   };
 
-  const removeFile = (file: File) => {
+  const removeFile = (file: string) => {
+
+    axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}rest/delete_video/`,
+        {
+          headers:{
+            "Authorization":`Bearer ${token.access_token}`,
+            "Content-Type": "application/json",
+          },
+          data: {
+            "name" : file
+          }
+        },
+    )
+
     setFilesToUpload((prevUploadProgress) => {
-      return prevUploadProgress.filter((item) => item.File !== file);
+      return prevUploadProgress.filter((item) => item.fileName !== file);
     });
 
     setUploadedFiles((prevUploadedFiles) => {
-      return prevUploadedFiles.filter((item) => item !== file);
+      return prevUploadedFiles.filter((item) => item.name !== file);
     });
   };
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setFilesToUpload((prevUploadProgress) => {
       acceptedFiles = acceptedFiles.slice(0, 4-prevUploadProgress.length).filter((file)=>{
         for (let file1 of prevUploadProgress){
-          if(file1.File.name === file.name)return false;
+          if(file1.File?.name === file.name)return false;
         }
         return true;
       });
@@ -179,6 +185,7 @@ export default function ImageUpload({token}: any) {
           return {
             progress: 0,
             File: file,
+            fileName: file.name,
             source: null,
           };
         }),
@@ -212,7 +219,7 @@ export default function ImageUpload({token}: any) {
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
-      
+
       <div className="w-full h-full flex flex-col justify-center ">
         <div className="w-full h-[50%]">
           <label
@@ -250,7 +257,7 @@ export default function ImageUpload({token}: any) {
           {filesToUpload.map((fileUploadProgress) => {
             return (
                 <div
-                    key={fileUploadProgress.File.lastModified}
+                    key={fileUploadProgress.fileName}
                     className="h-[25%] w-full flex justify-between gap-2 rounded-lg overflow-hidden border border-slate-100 group hover:pr-0 pr-2"
                 >
                   <div className="flex flex-1 items-center  p-2">
@@ -261,7 +268,7 @@ export default function ImageUpload({token}: any) {
                     <div className="w-full ml-2 space-y-1">
                       <div className="text-sm flex justify-between">
                         <p className=" ">
-                          {fileUploadProgress.File.name.slice(0, 25)}
+                          {fileUploadProgress.fileName.slice(0, 25)}
                         </p>
                         <span className="text-xs">
                             {fileUploadProgress.progress}%
@@ -279,7 +286,7 @@ export default function ImageUpload({token}: any) {
                       onClick={() => {
                         if (fileUploadProgress.source)
                           fileUploadProgress.source.cancel("Upload cancelled");
-                        removeFile(fileUploadProgress.File);
+                        removeFile(fileUploadProgress.fileName);
                       }}
                       className=" text-white bg-red-500 transition-all items-center justify-center cursor-pointer px-2 hidden group-hover:flex "
                   >
