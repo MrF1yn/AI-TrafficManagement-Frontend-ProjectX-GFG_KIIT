@@ -33,6 +33,16 @@ export default function NavBar() {
 
     const {data: session, status} = useSession();
     const router = useRouter();
+    useEffect(() => {
+
+        if(!session)return;
+        //@ts-ignore
+        if (session.hasOwnProperty("error") && session.error) {
+            let signOutPromise =  signOut({redirect: false}).then((value)=>{
+                router.push(`${process.env.NEXT_PUBLIC_URL}`);
+            });
+        }
+    }, [session]);
     return (
 
 

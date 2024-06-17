@@ -19,6 +19,8 @@ export default function RootLayout({
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
+
+
     return (
         <html lang="en" className="h-[100vh] w-[100vw]">
         <body className="h-[100vh] w-[100vw] bg-black flex flex-col">

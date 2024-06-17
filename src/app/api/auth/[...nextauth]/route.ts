@@ -126,16 +126,21 @@ const handler = NextAuth({
             }
             // Refresh the backend token if necessary
             if (getCurrentEpochTime() > (token["ref"] as any)) {
-                const response = await axios({
-                    method: "post",
-                    url: process.env.NEXTAUTH_BACKEND_URL + "auth/token/refresh/",
-                    data: {
-                        refresh: token["refresh_token"],
-                    },
-                });
-                token["access_token"] = response.data.access;
-                token["refresh_token"] = response.data.refresh;
-                token["ref"] = getCurrentEpochTime() + BACKEND_ACCESS_TOKEN_LIFETIME;
+                try {
+                    const response = await axios({
+                        method: "post",
+                        url: process.env.NEXTAUTH_BACKEND_URL + "auth/token/refresh/",
+                        data: {
+                            refresh: token["refresh_token"],
+                        },
+                    });
+                    token["access_token"] = response.data.access;
+                    token["refresh_token"] = response.data.refresh;
+                    token["ref"] = getCurrentEpochTime() + BACKEND_ACCESS_TOKEN_LIFETIME;
+                }catch (error){
+                    token["error"] = error;
+                }
+
             }
             return token;
         },

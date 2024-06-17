@@ -2,7 +2,7 @@
 "use client";
 
 import "./TrafficLight.css";
-export default function TrafficLight( {on}: {on: boolean} ) {
+export default function TrafficLight( {on=""}: {on: string} ) {
 
 
 
@@ -11,14 +11,14 @@ export default function TrafficLight( {on}: {on: boolean} ) {
             <label className="switch">
                 <input type="radio" name="value-radio"/>
                 <div className="button">
-                    <div className="light" id={on?"on":""}></div>
+                    <div className="light" id={on==="red"?"on":""}></div>
                     <div className="dots"></div>
                 </div>
             </label>
             <label className="switch2">
                 <input type="radio" name="value-radio"/>
                 <div className="button">
-                    <div className="light" id={on?"":"on"} ></div>
+                    <div className="light" id={on==="green"?"on":""} ></div>
                     <div className="dots"></div>
                 </div>
             </label>
