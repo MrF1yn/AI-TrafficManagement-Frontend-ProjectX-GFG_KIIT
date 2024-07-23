@@ -21,10 +21,12 @@ export default function ResultsPage() {
     const [started, setStarted] = useState(false);
     const [data, setData] = useState<LaneData>();
     let socket = useRef<WebSocket>();
+
     useEffect(() => {
         console.log("STARTSTOP")
         if (status !== "authenticated") return;
             initSocket();
+            socket.current?.send("start");
         return () => {
             // @ts-ignore
             socket.current.close();
